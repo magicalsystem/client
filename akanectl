@@ -1,0 +1,4 @@
+#!/usr/bin/env python2
+import akane.client
+
+akane.client.cli()
