@@ -1,5 +1,6 @@
 import click
 import cmd_user
+import libs.auth
 
 @cmd_user.user.group()
 def key():
@@ -30,3 +31,12 @@ def list(username):
 @click.argument("number", type=int)
 def show(username, number):
     pass
+
+@key.command()
+def verify():
+    import random, base64
+    message = "My important testing message"
+
+    s = libs.auth.sign(message)
+    
+    print libs.auth.verify(s, message)
