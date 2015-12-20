@@ -2,11 +2,13 @@ import click
 import client
 
 @client.cli.group()
-def user():
+@click.pass_context
+def user(ctx):
     pass
 
 @user.command()
-def add():
+@click.pass_context
+def add(ctx):
     click.echo("Added user")
 
 @user.command("del")

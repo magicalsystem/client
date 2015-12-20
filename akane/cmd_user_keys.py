@@ -33,10 +33,10 @@ def show(username, number):
     pass
 
 @key.command()
-def verify():
-    import random, base64
-    message = "My important testing message"
-
-    s = libs.auth.sign(message)
-    
-    print libs.auth.verify(s, message)
+@click.pass_context
+def verify(ctx):
+    #import random, base64
+    #message = "My important testing message"
+    #s = libs.auth.sign(message, ctx.obj['cfg']['keys']['private'])    
+    #print libs.auth.verify(s, message, ctx.obj['cfg']['keys']['public'])
+    ctx.obj['api'].verify()
