@@ -39,7 +39,7 @@ def sign(message, kpath):
 def verify(signature, message, kpath):
     pk = _get_publickey(kpath)
     verifier = pk.verifier(
-            signature,
+            base64.b64decode(signature),
             padding.PSS(
                 mgf=padding.MGF1(hashes.SHA256()),
                 salt_length=padding.PSS.MAX_LENGTH

@@ -7,11 +7,12 @@ def key():
     pass
 
 @key.command()
+@click.pass_context
 @click.argument("username")
 @click.argument("pubkey", type=click.File('rb'))
-def add(username, pubkey):
+def add(ctx, username, pubkey):
     pk = pubkey.read()  # read public key from file or stdin
-    # do sth with pk
+    ctx.obj['api'].key_add(username, pk)
     click.secho("Added key to %s" % username, fg='green')
 
 @key.command("del")
@@ -35,8 +36,8 @@ def show(username, number):
 @key.command()
 @click.pass_context
 def verify(ctx):
-    #import random, base64
-    #message = "My important testing message"
-    #s = libs.auth.sign(message, ctx.obj['cfg']['keys']['private'])    
-    #print libs.auth.verify(s, message, ctx.obj['cfg']['keys']['public'])
-    ctx.obj['api'].verify()
+    if ctx.obj['api'].verify():
+        click.secho("Access verified successfully", fg="green")
+    else:
+        click.secho("Access denied", fg="red")
+        ctx.exit(1)

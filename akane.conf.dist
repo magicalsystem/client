@@ -1,0 +1,8 @@
+[keys]
+private = /home/user/.ssh/id_rsa
+public = /home/user/.ssh/id_rsa.pub
+
+
+[api]
+url = http://localhost:5000/
+username = username
