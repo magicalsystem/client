@@ -3,15 +3,17 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.backends import default_backend
 import cryptography.exceptions
+from getpass import getpass
 
 
 def _get_privatekey(path):
-    # TODO: 
-    # handle encrypted keys
+    print "Opening: " + path
     with open(path, 'rb') as kfile:
+        pk_data = kfile.read()
+        pk_pass = getpass(prompt="Enter passphrase for private key: ") if "ENCRYPTED" in pk_data else None
         pk = serialization.load_pem_private_key(
-                kfile.read(),
-                password=None,
+                data=pk_data,
+                password=pk_pass,
                 backend=default_backend()
                 )
         return pk
