@@ -15,6 +15,8 @@ def ansible(ctx):
 @ansible.command('import')
 @click.pass_context
 @click.argument("inventory", type=click.File('rb'))
-def import_inventory(ctx, inv):
-    hosts, groups = libs.ansibleapi.parse_inventory(inv.name)
+def import_inventory(ctx, inventory):
+    hosts, groups = libs.ansibleapi.parse_inventory(inventory.name)
+    print hosts
+    print groups
 
