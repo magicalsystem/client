@@ -7,7 +7,6 @@ from getpass import getpass
 
 
 def _get_privatekey(path):
-    print "Opening: " + path
     with open(path, 'rb') as kfile:
         pk_data = kfile.read()
         pk_pass = getpass(prompt="Enter passphrase for private key: ") if "ENCRYPTED" in pk_data else None
