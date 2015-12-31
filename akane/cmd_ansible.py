@@ -33,11 +33,12 @@ def import_inventory(ctx, inventory):
         click.secho("Groups updated!", fg='green')
     else:
         click.secho("Error during group_update procedure", fg='red')
+        ctx.exit(1)
 
     if ctx.obj['api'].servers_update(hosts):
         click.secho("Hosts updated!", fg='green')
     else:
         click.secho("Error during hosts_update procedure", fg='red')
-
+        ctx.exit(1)
 
 
