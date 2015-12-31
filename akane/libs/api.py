@@ -23,12 +23,7 @@ class API(object):
                           json=payload)
         return d
 
-    def verify(self):
-        payload = self._build_payload({"msg": "Testing message"})
-        assert auth.verify(payload['signature'],
-                           payload['message'],
-                           self.cfg['keys']['public']) is True
-        r = self._post("verify", payload)
+    def _result(self, r):
         if r.status_code == 200:
             return True
         elif r.status_code == 401:
@@ -36,15 +31,33 @@ class API(object):
         else:
             raise RuntimeError("Server responded with status code: %d" % r.status_code)
 
+    def verify(self):
+        payload = self._build_payload({"msg": "Testing message"})
+        assert auth.verify(payload['signature'],
+                           payload['message'],
+                           self.cfg['keys']['public']) is True
+        r = self._post("verify", payload)
+        return self._result(r)
+
     def key_add(self, username, pubkey):
         message = {
                 'username': username,
                 'public_key': pubkey
                 }
         r = self._post("keys/add", self._build_payload(message))
-        if r.status_code == 200:
-            return True
-        elif r.status_code == 401:
-            return False
-        else:
-            raise RuntimeError("Something went wrong")
+        return self._result(r)
+
+    def groups_update(self, groups):
+        for group in groups:
+            group['_id'] = group['name']  # just to be sure
+
+        r = self._post("groups/update", self._build_payload(groups))
+        return self._result(r)
+
+
+    def servers_update(self, servers):
+        for server in servers:
+            server['_id'] = server['name']  # just to be sure
+
+        r = self._post("servers/update", self._build_payload(servers))
+        return self._result(r)
