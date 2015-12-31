@@ -5,14 +5,18 @@ from cryptography.hazmat.backends import default_backend
 import cryptography.exceptions
 from getpass import getpass
 
+__pk_passwd = None
 
 def _get_privatekey(path):
+    global __pk_passwd
+
     with open(path, 'rb') as kfile:
         pk_data = kfile.read()
-        pk_pass = getpass(prompt="Enter passphrase for private key: ") if "ENCRYPTED" in pk_data else None
+        __pk_passwd = getpass(prompt="Enter passphrase for private key: ") \
+                if __pk_passwd is None and "ENCRYPTED" in pk_data else None
         pk = serialization.load_pem_private_key(
                 data=pk_data,
-                password=pk_pass,
+                password=__pk_passwd,
                 backend=default_backend()
                 )
         return pk
