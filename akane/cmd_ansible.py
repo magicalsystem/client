@@ -1,4 +1,5 @@
 import tempfile
+import json
 
 import click
 
@@ -41,4 +42,10 @@ def import_inventory(ctx, inventory):
         click.secho("Error during hosts_update procedure", fg='red')
         ctx.exit(1)
 
+@ansible.command()
+@click.pass_context
+def di(ctx):
+    _, groups = ctx.obj['api'].groups_get()
+    _, hosts = ctx.obj['api'].servers_get()
 
+    click.echo(json.dumps(libs.ansibleapi.dynamic_inventory(groups, hosts)))

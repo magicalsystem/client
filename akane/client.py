@@ -1,3 +1,5 @@
+import sys
+
 import click
 from libs.config import read_config
 from libs.api import API

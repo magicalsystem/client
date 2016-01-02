@@ -23,11 +23,14 @@ class API(object):
                           json=payload)
         return d
 
-    def _result(self, r):
+    def _result(self, r, ret_msg=False):
         if r.status_code == 200:
-            return True
+            if ret_msg:
+                return True, json.loads(r.text)
+            else:
+                return True
         elif r.status_code == 401:
-            return False
+            return False, None
         else:
             raise RuntimeError("Server responded with status code: %d" % r.status_code)
 
@@ -55,9 +58,17 @@ class API(object):
         return self._result(r)
 
 
+    def groups_get(self, pattern=""):
+        r = self._post("groups", self._build_payload({'pattern': pattern}))
+        return self._result(r, True)
+
     def servers_update(self, servers):
         for server in servers:
             server['_id'] = server['name']  # just to be sure
 
         r = self._post("servers/update", self._build_payload(servers))
         return self._result(r)
+
+    def servers_get(self, pattern=""):
+        r = self._post("servers", self._build_payload({'pattern': pattern}))
+        return self._result(r, True)
