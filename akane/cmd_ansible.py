@@ -55,3 +55,18 @@ def di(ctx, list_flag, host):
     else:
         click.secho("Wrong dynamic inventory arguments", fg='red')
         ctx.exit(1)
+
+@ansible.command('temp-di')
+@click.pass_context
+@click.argument('filter', 'fltr')
+def temp_di(ctx, crit):
+   inv = tempfile.NamedTemporaryFile('wrb')
+   _, groups = ctx.obj['api'].groups_get()
+   pass
+
+
+@ansible.command()
+@click.pass_context
+def discover(ctx):
+    libs.ansibleapi.discover()
+

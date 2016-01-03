@@ -1,4 +1,8 @@
+import os
+
 import ansible.inventory
+import ansible.runner
+
 
 def parse_inventory(inv_path):
     inv = ansible.inventory.Inventory(inv_path)
@@ -50,3 +54,15 @@ def dynamic_inventory(groups, hosts):
                 if h['name'] not in inv[a]['hosts']:
                     inv[a]['hosts'].append(h['name'])
     return inv
+
+def discover():
+    inv = ansible.inventory.Inventory("./akane-di")
+    resp = ansible.runner.Runner(**{
+        'pattern': '*',
+        'module_name': 'setup',
+        'inventory': inv,
+        'remote_user': os.getenv('USER'),
+        'private_key_file': '~/.ssh/id_rsa'
+        }).run()
+    
+    return resp
