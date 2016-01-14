@@ -72,3 +72,9 @@ class API(object):
     def servers_get(self, pattern=""):
         r = self._post("servers", self._build_payload({'pattern': pattern}))
         return self._result(r, True)
+
+    def ansible_di(self, pattern=[]):
+        r = self._post("ansible/inv", self._build_payload({'pattern': pattern}))
+        return self._result(r, True)
+
+

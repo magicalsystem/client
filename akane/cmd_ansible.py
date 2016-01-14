@@ -1,5 +1,7 @@
 import tempfile
 import json
+import os
+import stat
 
 import click
 
@@ -8,6 +10,17 @@ import libs.ansibleapi
 from libs.config import read_config
 from libs.api import API
 
+_ANSIBLE_DI_TPL_ = """#!/usr/bin/env bash
+
+./akanectl ansible di %s $@
+"""
+
+def _criteria2dict(criteria):
+    output = {}
+    for c in criteria:
+        k, v = c.split('=')
+        output[k] = v.split(',')
+    return output
 
 @client.cli.group()
 @click.pass_context
@@ -44,25 +57,30 @@ def import_inventory(ctx, inventory):
 
 @ansible.command()
 @click.pass_context
+@click.argument('criteria', nargs=-1)
 @click.option('--list', 'list_flag', is_flag=True)
 @click.option('--host')
-def di(ctx, list_flag, host):
-    if list_flag and not host:
-        _, groups = ctx.obj['api'].groups_get()
-        _, hosts = ctx.obj['api'].servers_get()
+def di(ctx, criteria, list_flag, host):
+    c = _criteria2dict(criteria)
 
-        click.echo(json.dumps(libs.ansibleapi.dynamic_inventory(groups, hosts)))
+    if list_flag and not host:
+        _, di = ctx.obj['api'].ansible_di(c)
+        click.echo(json.dumps(di))
     else:
         click.secho("Wrong dynamic inventory arguments", fg='red')
         ctx.exit(1)
 
 @ansible.command('temp-di')
 @click.pass_context
-@click.argument('filter', 'fltr')
-def temp_di(ctx, crit):
-   inv = tempfile.NamedTemporaryFile('wrb')
-   _, groups = ctx.obj['api'].groups_get()
-   pass
+@click.argument('criteria', nargs=-1)
+def temp_di(ctx, criteria):
+    inv = tempfile.NamedTemporaryFile('wrb', delete=False)
+    inv.write(_ANSIBLE_DI_TPL_ % criteria)
+    inv.close()
+
+    mode = os.stat(inv.name).st_mode
+    os.chmod(inv.name, mode | stat.S_IEXEC)
+    click.echo(inv.name)
 
 
 @ansible.command()
