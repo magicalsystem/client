@@ -22,6 +22,15 @@ def _criteria2dict(criteria):
         output[k] = v.split(',')
     return output
 
+def _create_di(criteria):
+    inv = tempfile.NamedTemporaryFile('wrb', delete=False)
+    inv.write(_ANSIBLE_DI_TPL_ % criteria)
+    inv.close()
+
+    mode = os.stat(inv.name).st_mode
+    os.chmod(inv.name, mode | stat.S_IEXEC)
+    return inv.name
+
 @client.cli.group()
 @click.pass_context
 def ansible(ctx):
@@ -74,17 +83,12 @@ def di(ctx, criteria, list_flag, host):
 @click.pass_context
 @click.argument('criteria', nargs=-1)
 def temp_di(ctx, criteria):
-    inv = tempfile.NamedTemporaryFile('wrb', delete=False)
-    inv.write(_ANSIBLE_DI_TPL_ % criteria)
-    inv.close()
-
-    mode = os.stat(inv.name).st_mode
-    os.chmod(inv.name, mode | stat.S_IEXEC)
-    click.echo(inv.name)
+    click.echo(_create_di(criteria))
 
 
 @ansible.command()
 @click.pass_context
-def discover(ctx):
-    libs.ansibleapi.discover()
-
+@click.argument('hostname')
+def discover(ctx, hostname):
+     r = libs.ansibleapi.discover(_create_di("name=%s" % hostname))
+     # todo: populate db with received data

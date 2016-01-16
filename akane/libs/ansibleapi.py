@@ -1,4 +1,5 @@
 import os
+import json
 
 import ansible.inventory
 import ansible.runner
@@ -30,8 +31,8 @@ def parse_inventory(inv_path):
     return hosts, groups
 
 
-def discover():
-    inv = ansible.inventory.Inventory("./akane-di")
+def discover(invfile):
+    inv = ansible.inventory.Inventory(invfile)
     resp = ansible.runner.Runner(**{
         'pattern': '*',
         'module_name': 'setup',
