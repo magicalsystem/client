@@ -5,6 +5,14 @@ import ansible.inventory
 import ansible.runner
 
 
+def _criteria2dict(criteria):
+    output = {}
+    for c in criteria:
+        k, v = c.split('=')
+        output[k] = v.split(',')
+    return output
+
+
 def parse_inventory(inv_path):
     inv = ansible.inventory.Inventory(inv_path)
  

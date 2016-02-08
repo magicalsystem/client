@@ -13,6 +13,7 @@ def cli(ctx):
 
 # import commands
 import cmd_user
+import cmd_group
 
 # import ansible module
 import cmd_ansible

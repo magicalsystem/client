@@ -16,8 +16,11 @@ def delete():
     click.echo("Deleted user")
 
 @user.command()
-def list():
-    click.echo("Listing users")
+@click.pass_context
+def list(ctx):
+    users = ctx.obj['api'].users_get()
+
+    click.echo(users)
 
 @user.command()
 def show():

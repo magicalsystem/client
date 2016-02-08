@@ -23,6 +23,11 @@ class API(object):
                           json=payload)
         return d
 
+    def _get(self, resource, payload=None):
+        d = requests.get(self.cfg['api']['url'] + resource,
+                         json=payload)
+        return d
+
     def _result(self, r, ret_msg=False):
         if r.status_code == 200:
             if ret_msg:
@@ -50,6 +55,18 @@ class API(object):
         r = self._post("keys/add", self._build_payload(message))
         return self._result(r)
 
+    def users_get(self, username=None):
+        r = self._get("users", self._build_payload({}))
+
+        return self._result(r, True)
+
+    def groups_add(self, name):
+        message = {
+            "name": name,
+        }
+        r = self._post("groups/add", self._build_payload(message))
+        return self._result(r)
+
     def groups_update(self, groups):
         for group in groups:
             group['_id'] = group['name']  # just to be sure
@@ -60,6 +77,10 @@ class API(object):
 
     def groups_get(self, pattern=""):
         r = self._post("groups", self._build_payload({'pattern': pattern}))
+        return self._result(r, True)
+
+    def groups_del(self, name):
+        r = self._post("groups/del", self._build_payload(name))
         return self._result(r, True)
 
     def servers_update(self, servers):

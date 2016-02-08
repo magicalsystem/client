@@ -15,12 +15,6 @@ _ANSIBLE_DI_TPL_ = """#!/usr/bin/env bash
 ./akanectl ansible di %s $@
 """
 
-def _criteria2dict(criteria):
-    output = {}
-    for c in criteria:
-        k, v = c.split('=')
-        output[k] = v.split(',')
-    return output
 
 def _create_di(criteria):
     inv = tempfile.NamedTemporaryFile('wrb', delete=False)
@@ -70,7 +64,7 @@ def import_inventory(ctx, inventory):
 @click.option('--list', 'list_flag', is_flag=True)
 @click.option('--host')
 def di(ctx, criteria, list_flag, host):
-    c = _criteria2dict(criteria)
+    c = libs.ansibleapi._criteria2dict(criteria)
 
     if list_flag and not host:
         _, di = ctx.obj['api'].ansible_di(c)
