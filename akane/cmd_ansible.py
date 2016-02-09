@@ -84,5 +84,12 @@ def temp_di(ctx, criteria):
 @click.pass_context
 @click.argument('hostname')
 def discover(ctx, hostname):
-     r = libs.ansibleapi.discover(_create_di("name=%s" % hostname))
-     # todo: populate db with received data
+    r = libs.ansibleapi.discover(_create_di("name=%s" % hostname))
+    ds = ['ansible_facts', 'facter_facts']
+    if hostname not in r['contacted'].keys():
+        click.secho("Failed", fg='red')
+        ctx.exit(1)
+    data = r['contacted'][hostname]
+    facts = {d: data[d] for d in ds if d in data.keys()}
+    ctx.obj['api'].servers_update([{'name': hostname, 'facts': facts}])
+
