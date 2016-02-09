@@ -8,22 +8,27 @@ def user(ctx):
 
 @user.command()
 @click.pass_context
-def add(ctx):
-    click.echo("Added user")
+@click.argument("name")
+def add(ctx, name):
+    status = ctx.obj['api'].users_update(name)
+    click.echo('User added') if status else click.echo('Something went wrong, please try again')
 
 @user.command("del")
-def delete():
-    click.echo("Deleted user")
+@click.pass_context
+@click.argument("name")
+def delete(ctx, name):
+    status, users = ctx.obj['api'].users_get({"name": name})
+    click.echo("User deleted") if status else click.echo('Something went wrong, please try again')
 
 @user.command()
 @click.pass_context
 def list(ctx):
-    users = ctx.obj['api'].users_get()
-
-    click.echo(users)
+    status, users = ctx.obj['api'].users_get()
+    click.echo(users) if status else click.echo('Something went wrong, please try again')
 
 @user.command()
-def show():
-    click.echo("Information about user")
-
-import cmd_user_keys
+@click.pass_context
+@click.argument("name")
+def show(ctx, name):
+    status, users = ctx.obj['api'].users_get({"name": name})
+    click.echo(users) if status else click.echo('Something went wrong, please try again')
