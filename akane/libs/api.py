@@ -100,8 +100,11 @@ class API(object):
         r = self._post("servers", self._build_payload({'pattern': pattern}))
         return self._result(r, True)
 
+    def servers_del(self, name):
+        r = self._post("servers/del", self._build_payload({'name': name}))
+        return self._result(r, False)
+
+
     def ansible_di(self, pattern=[]):
         r = self._post("ansible/inv", self._build_payload({'pattern': pattern}))
         return self._result(r, True)
-
-

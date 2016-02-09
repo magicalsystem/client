@@ -26,7 +26,7 @@ def add(ctx, name):
 @click.pass_context
 @click.argument('name')
 def show(ctx, name):
-    status, result = ctx.obj['api'].groups_get(name)
+    status, result = ctx.obj['api'].groups_get({"name": name})
     if status:
         click.echo(result)
     else:
