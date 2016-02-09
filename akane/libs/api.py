@@ -57,14 +57,20 @@ class API(object):
 
     def users_get(self, username=None):
         r = self._get("users", self._build_payload({}))
-
         return self._result(r, True)
 
-    def groups_add(self, name):
+    def users_update(self, username):
         message = {
-            "name": name,
+            "username": username
         }
-        r = self._post("groups/add", self._build_payload(message))
+        r = self._post("users/update", self._build_payload(message))
+        return self._result(r)
+
+    def groups_add(self, name):
+        message = [{
+            "name": name
+        }]
+        r = self._post("groups/update", self._build_payload(message))
         return self._result(r)
 
     def groups_update(self, groups):

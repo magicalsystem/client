@@ -16,22 +16,21 @@ def group(ctx):
 @click.argument('name')
 def add(ctx, name):
     result = ctx.obj['api'].groups_add(name)
-
     if result:
-        click.echo('Ale sie super dodalo')
+        click.echo('Group added')
     else:
-        pass
-    #scierwiasto sie dodalo
+        click.echo('Something went wrong, please try again')
 
 
 @group.command()
 @click.pass_context
 @click.argument('name')
 def show(ctx, name):
-    result = ctx.obj['api'].groups_get(name)
-
-    if result:
-        pass #tutaj wyswietl result
+    status, result = ctx.obj['api'].groups_get(name)
+    if status:
+        click.echo(result)
+    else:
+        click.echo("Something went wrong, please try again")
 
 
 @group.command("del")
